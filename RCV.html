@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranked Choice Voting</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        h2 { text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        select, input[type="text"] { width: 100%; padding: 10px; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ranked Choice Voting</h2>
+        <form id="voteForm">
+            <div class="form-group">
+                <label for="voterName">Your Name (First Choice)</label>
+                <input type="text" id="voterName" name="voterName" required placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="rank2">2nd Choice</label>
+                <select id="rank2" name="rank2" required>
+                    <option value="">Select a candidate</option>
+                    <option value="candidateA">Candidate A</option>
+                    <option value="candidateB">Candidate B</option>
+                    <option value="candidateC">Candidate C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rank3">3rd Choice</label>
+                <select id="rank3" name="rank3" required>
+                    <option value="">Select a candidate</option>
+                    <option value="candidateA">Candidate A</option>
+                    <option value="candidateB">Candidate B</option>
+                    <option value="candidateC">Candidate C</option>
+                </select>
+            </div>
+            <button type="button" onclick="submitVote()">Submit Vote</button>
+        </form>
+        <button type="button" onclick="viewAllVotes()">View All Votes</button>
+        <div id="results"></div>
+        <div id="allVotes" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        const votes = [];
+
+        function submitVote() {
+            const voterName = document.getElementById("voterName").value;
+            const rank2 = document.getElementById("rank2").value;
+            const rank3 = document.getElementById("rank3").value;
+
+            if (voterName && rank2 && rank3) {
+                // Store the vote
+                votes.push({ voterName, rank2, rank3 });
+                alert("Vote submitted successfully!");
+                document.getElementById("voteForm").reset();
+                
+                // Display live results after vote submission
+                calculateResults();  
+            } else {
+                alert("Please enter your name and select candidates for each rank.");
+            }
+        }
+
+        // Function to display the current results
+        function calculateResults() {
+            let resultText = "<h3>Results:</h3>";
+
+            votes.forEach(vote => {
+                resultText += `<p>${vote.voterName} : ${vote.rank2}, ${vote.rank3}</p>`;
+            });
+
+            document.getElementById("results").innerHTML = resultText;
+
+            // Display summary of 3rd choice selections
+            displayThirdChoiceSummary();
+        }
+
+        // Function to display summary of 3rd choice selections
+        function displayThirdChoiceSummary() {
+            const thirdChoiceCount = { candidateA: 0, candidateB: 0, candidateC: 0 };
+
+            // Count each 3rd choice
+            votes.forEach(vote => {
+                thirdChoiceCount[vote.rank3]++;
+            });
+
+            // Display the summary
+            let summaryText = "<h3>Summary of 3rd Choice Selections:</h3>";
+            for (let candidate in thirdChoiceCount) {
+                summaryText += `<p>${candidate}: ${thirdChoiceCount[candidate]} votes</p>`;
+            }
+
+            document.getElementById("results").innerHTML += summaryText;
+        }
+
+        // Function to view all the stored votes in a detailed list
+        function viewAllVotes() {
+            let allVotesText = "<h3>All Collected Votes:</h3>";
+
+            votes.forEach((vote, index) => {
+                allVotesText += `<p>Vote ${index + 1}: ${vote.voterName}, ${vote.rank2}, ${vote.rank3}</p>`;
+            });
+
+            document.getElementById("allVotes").innerHTML = allVotesText;
+        }
+    </script>
+</body>
+</html>
